@@ -224,7 +224,6 @@ instance (KnownSymbol sym, ToParamSchema a, HasSwagger sub, KnownSymbol (FoldDes
   toSwagger _ = toSwagger (Proxy :: Proxy sub)
     & addParam param
     & prependPath capture
-    & addDefaultResponse404 tname
     where
       pname = symbolVal (Proxy :: Proxy sym)
       tname = Text.pack pname
@@ -254,7 +253,6 @@ instance (KnownSymbol desc, HasSwagger api) => HasSwagger (Summary desc :> api) 
 instance (KnownSymbol sym, ToParamSchema a, HasSwagger sub, SBoolI (FoldRequired mods), KnownSymbol (FoldDescription mods)) => HasSwagger (QueryParam' mods sym a :> sub) where
   toSwagger _ = toSwagger (Proxy :: Proxy sub)
     & addParam param
-    & addDefaultResponse400 tname
     where
       tname = Text.pack (symbolVal (Proxy :: Proxy sym))
       transDesc ""   = Nothing
@@ -271,7 +269,6 @@ instance (KnownSymbol sym, ToParamSchema a, HasSwagger sub, SBoolI (FoldRequired
 instance (KnownSymbol sym, ToParamSchema a, HasSwagger sub) => HasSwagger (QueryParams sym a :> sub) where
   toSwagger _ = toSwagger (Proxy :: Proxy sub)
     & addParam param
-    & addDefaultResponse400 tname
     where
       tname = Text.pack (symbolVal (Proxy :: Proxy sym))
       param = mempty
@@ -291,7 +288,6 @@ instance (KnownSymbol sym, ToParamSchema a, HasSwagger sub) => HasSwagger (Query
 instance (KnownSymbol sym, HasSwagger sub) => HasSwagger (QueryFlag sym :> sub) where
   toSwagger _ = toSwagger (Proxy :: Proxy sub)
     & addParam param
-    & addDefaultResponse400 tname
     where
       tname = Text.pack (symbolVal (Proxy :: Proxy sym))
       param = mempty
@@ -305,7 +301,6 @@ instance (KnownSymbol sym, HasSwagger sub) => HasSwagger (QueryFlag sym :> sub) 
 instance (KnownSymbol sym, ToParamSchema a, HasSwagger sub, SBoolI (FoldRequired mods), KnownSymbol (FoldDescription mods)) => HasSwagger (Header' mods  sym a :> sub) where
   toSwagger _ = toSwagger (Proxy :: Proxy sub)
     & addParam param
-    & addDefaultResponse400 tname
     where
       tname = Text.pack (symbolVal (Proxy :: Proxy sym))
       transDesc ""   = Nothing
@@ -322,7 +317,6 @@ instance (ToSchema a, AllAccept cs, HasSwagger sub, KnownSymbol (FoldDescription
   toSwagger _ = toSwagger (Proxy :: Proxy sub)
     & addParam param
     & addConsumes (allContentType (Proxy :: Proxy cs))
-    & addDefaultResponse400 tname
     & definitions %~ (<> defs)
     where
       tname = "body"
@@ -336,7 +330,7 @@ instance (ToSchema a, AllAccept cs, HasSwagger sub, KnownSymbol (FoldDescription
         & schema    .~ ParamBody ref
 
 -- | This instance is an approximation.
--- 
+--
 -- @since 1.1.7
 instance (ToSchema a, Accept ct, HasSwagger sub, KnownSymbol (FoldDescription mods)) => HasSwagger (StreamBody' mods fr ct a :> sub) where
   toSwagger _ = toSwagger (Proxy :: Proxy sub)
